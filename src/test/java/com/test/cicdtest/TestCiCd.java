@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CicdTestApplicationTests {
+public class TestCiCd {
 
 	@Test
-	void contextLoads() {
+	private void test(){
+		System.out.println("test");
 	}
-
 }
