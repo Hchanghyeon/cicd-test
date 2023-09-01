@@ -35,8 +35,8 @@ jobs:
         with:
           arguments: build
 
-      - name: Docker build & push to prod
+      - name: Docker build & push to dev
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f ticketparis-dev ${{ secrets.DOCKER_USERNAME }}/ticketparis-dev .
+          docker buildx build -f ticketparis-dev ${{ secrets.DOCKER_USERNAME }}/ticketparis-dev .
           docker push ${{ secrets.DOCKER_USERNAME }}/ticketparis-dev
