@@ -72,10 +72,10 @@ jobs:
           username: ${{ secrets.EC2_INSTANCE_USERNAME }}
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
           source: "./" # github action 서버 내부 경로
-          target: "/dev"     # ec2 서버 내부 경로
+          target: "~/dev"     # ec2 서버 내부 경로
           strip_components: 1       # 덮어쓰기할 file depth
 
-      - name: EC2에 원격 접속 후 배포하기
+      - name: deploy EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_HOST }}
