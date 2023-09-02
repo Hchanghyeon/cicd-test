@@ -51,6 +51,7 @@ jobs:
 
       - name: make common env
         run: |
+          cd ./deploy
           echo '#!/bin/sh' >> .env
           echo 'DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}' >> .env
           echo 'DOCKER_REPOSITORY=${{ secrets.DOCKER_REPOSITORY }}' >> .env
@@ -58,6 +59,7 @@ jobs:
 
       - name: make spring env
         run: |
+          cd ./deploy
           echo '#!/bin/sh' >> spring.env
           echo 'DATABASE_DEV_MYSQL_CLASSNAME=${{ secrets.DATABASE_DEV_MYSQL_CLASSNAME }}' >> spring.env
           echo 'DATABASE_DEV_MYSQL_PASSWORD=${{ secrets.DATABASE_DEV_MYSQL_PASSWORD }}' >> spring.env
