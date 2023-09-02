@@ -73,8 +73,8 @@ jobs:
           port: ${{ secrets.EC2_INSTANCrmE_PORT }}
           username: ${{ secrets.EC2_INSTANCE_USERNAME }}
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          source: "./deploy" # github action 서버 내부 경로
-          target: "~/dev"     # ec2 서버 내부 경로
+          source: "./deploy/*" # github action 서버 내부 경로
+          target: "~/dev/deploy"     # ec2 서버 내부 경로
           strip_components: 1       # 덮어쓰기할 file depth
 
       - name: deploy EC2
@@ -86,7 +86,7 @@ jobs:
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
-            cd dev/deploy
+            cd ~/dev/deploy
             docker-compose -p tickerparis-dev-1 down
             docker-compose -p ticketparis-dev-1 up -d
             docker image prune -f
