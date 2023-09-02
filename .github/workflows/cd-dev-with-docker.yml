@@ -1,4 +1,4 @@
-name: ci-dev-with-docker
+name: cd-dev-with-docker
 
 on:
   push: # 아래 브랜치에 Push되면 작동
