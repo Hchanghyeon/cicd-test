@@ -86,7 +86,7 @@ jobs:
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
-            cd dev
+            cd dev/deploy
             docker-compose -p tickerparis-dev-1 down
             docker-compose -p ticketparis-dev-1 up -d
             docker image prune -f
