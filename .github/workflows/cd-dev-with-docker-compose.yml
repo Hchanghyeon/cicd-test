@@ -1,4 +1,4 @@
-name: cd-dev-with-docker
+name: cd-dev-with-docker-compose
 
 on:
   push: # 아래 브랜치에 Push되면 작동
@@ -49,19 +49,41 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
           platforms: linux/amd64
 
-      - name: EC2 deploy
+      - name: make common env
+        run: |
+          echo '#!/bin/sh' >> .env
+          echo 'DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}' >> .env
+          echo 'DOCKER_REPOSITORY=${{ secrets.DOCKER_REPOSITORY }}' >> .env
+          echo 'DOCKER_TAG=${{ secrets.DOCKER_TAG }}' >> .env
+
+      - name: make spring env
+        run: |
+          echo '#!/bin/sh' >> spring.env
+          echo 'DATABASE_DEV_MYSQL_CLASSNAME=${{ secrets.DATABASE_DEV_MYSQL_CLASSNAME }}' >> spring.env
+          echo 'DATABASE_DEV_MYSQL_PASSWORD=${{ secrets.DATABASE_DEV_MYSQL_PASSWORD }}' >> spring.env
+          echo 'DATABASE_DEV_MYSQL_URL=${{ secrets.DATABASE_DEV_MYSQL_URL }}' >> spring.env
+          echo 'DATABASE_DEV_MYSQL_USERNAME=${{ secrets.DATABASE_DEV_MYSQL_USERNAME }}' >> spring.env
+
+      - name: send file to EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_INSTANCE_HOST }}
+          port: ${{ secrets.EC2_INSTANCE_PORT }}
+          username: ${{ secrets.EC2_INSTANCE_USERNAME }}
+          key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+          source: "./" # github action 서버 내부 경로
+          target: "/dev"     # ec2 서버 내부 경로
+          strip_components: 1       # 덮어쓰기할 file depth
+
+      - name: EC2에 원격 접속 후 배포하기
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_HOST }}
           port: ${{ secrets.EC2_INSTANCE_PORT }}
           username: ${{ secrets.EC2_INSTANCE_USERNAME }}
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          # dev 폴더에 접근
-          # 도커 허브에서 이미지 pull로 당겨오기
-          # 도커 컨테이너를 백 그라운드에서 실행(-d), 호스트의 8081을 컨테이너의 80과 연결
-          # 시스템에서 사용하지 않는 도커 이미지들을 제거(떠있지 않은 참조하고 있지 않은 이미지 삭제)
           script: |
-            cd dev
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
-            sudo docker run -d -p 80:8081 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
-            sudo docker image prune -f
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ secrets.DOCKER_TAG }}
+            docker-compose -p tickerparis-dev-1 down
+            docker-compose -p ticketparis-dev-1 up -d
+            docker image prune -f
