@@ -68,10 +68,10 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_HOST }}
-          port: ${{ secrets.EC2_INSTANCE_PORT }}
+          port: ${{ secrets.EC2_INSTANCrmE_PORT }}
           username: ${{ secrets.EC2_INSTANCE_USERNAME }}
           key: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
-          source: "./" # github action 서버 내부 경로
+          source: "./deploy" # github action 서버 내부 경로
           target: "~/dev"     # ec2 서버 내부 경로
           strip_components: 1       # 덮어쓰기할 file depth
 
