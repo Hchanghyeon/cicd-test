@@ -6,9 +6,6 @@ on:
   pull_request: # 아래 브랜치에 PullRequest 되면 작동
     branches: [ "develop" ]
 
-permissions:
-  contents: read
-
 # 작업들
 jobs:
   # 작업 명(본인이 지으면 됨)
